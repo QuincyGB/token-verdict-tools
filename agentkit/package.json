@@ -1,0 +1,36 @@
+{
+  "dependencies": {
+    "@x402/core": "^2.28.0",
+    "@x402/evm": "^2.28.0",
+    "@x402/fetch": "^2.28.0",
+    "viem": "^2.57.0",
+    "zod": "^3.25.0"
+  },
+  "description": "Coinbase AgentKit action provider for Token Verdict \u2014 pay-per-call token risk verdicts ($0.02 USDC on Base via x402).",
+  "devDependencies": {
+    "@coinbase/agentkit": "^0.10.4",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "name": "token-verdict-agentkit",
+  "peerDependencies": {
+    "@coinbase/agentkit": "^0.10.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "types": "dist/index.d.ts",
+  "version": "0.1.0"
+}

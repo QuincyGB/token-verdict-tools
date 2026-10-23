@@ -1,0 +1,61 @@
+{
+  "token": {
+    "address": "0x2821d96B5FC81aEC3763340b375a846a89A3Ec1b",
+    "symbol": "BASE",
+    "name": "Base King",
+    "chain": "base"
+  },
+  "verdict": "CAUTION",
+  "score": 35.0,
+  "signals": [
+    {
+      "name": "Liquidity depth",
+      "score": 5,
+      "weight": 3,
+      "detail": "Deep liquidity ($259,106) \u2014 the book can absorb real selling."
+    },
+    {
+      "name": "Volume churn",
+      "score": 60,
+      "weight": 2,
+      "detail": "24h volume is just $0 \u2014 effectively no market."
+    },
+    {
+      "name": "Sell pressure",
+      "score": 60,
+      "weight": 2,
+      "detail": "67% sells vs 33% buys \u2014 clear distribution."
+    },
+    {
+      "name": "Price action",
+      "score": 10,
+      "weight": 2,
+      "detail": "24h price action (+0.6%) is unremarkable."
+    },
+    {
+      "name": "Trader breadth",
+      "score": 70,
+      "weight": 1,
+      "detail": "Only 3 transactions in 24h \u2014 a handful of wallets IS the market."
+    },
+    {
+      "name": "Pair age",
+      "score": 5,
+      "weight": 1,
+      "detail": "Pair has meaningful history."
+    }
+  ],
+  "take": "BASE (Base King) trades at $0.0003238 on uniswap with $259.1k in liquidity. Trading has effectively stopped \u2014 $0 of volume across 3 transactions in 24h \u2014 so this is a dormant book, not a live market, whatever the liquidity figure says. Verdict: CAUTION \u2014 tradable at most in small size, and the signals above are why. Don't chase green candles. Not checked: contract honeypot simulation and holder concentration (need a paid indexer) \u2014 this verdict covers market structure only. Chart: https://dexscreener.com/base/0x2821d96b5fc81aec3763340b375a846a89a3ec1b",
+  "market": {
+    "price_usd": "0.0003238",
+    "liquidity_usd": 259106,
+    "volume_24h_usd": 0.01,
+    "price_change_24h_pct": 0.55,
+    "txns_24h": {
+      "buys": 1,
+      "sells": 2
+    },
+    "dex": "uniswap",
+    "pair_url": "https://dexscreener.com/base/0x2821d96b5fc81aec3763340b375a846a89a3ec1b"
+  }
+}
