@@ -1,0 +1,53 @@
+{
+  "resource_url": "https://token-verdict-production.up.railway.app/v1/verdict",
+  "checked_at": "2026-10-23T15:30:00Z",
+  "verdict": "TRUSTED",
+  "score": 95.0,
+  "reasons": [],
+  "liveness": {
+    "alive": true,
+    "http_status": 0,
+    "latency_ms": 0,
+    "method": "GET",
+    "x402_valid": true,
+    "parse_error": "example"
+  },
+  "terms": {
+    "found": true,
+    "price_usdc": "example",
+    "amount_units": "example",
+    "network": "example",
+    "asset": "example",
+    "pay_to": "example",
+    "scheme": "example",
+    "x402_version": 0
+  },
+  "schema_quality": {
+    "extension_present": true,
+    "hollow": true,
+    "score": 0,
+    "deductions": []
+  },
+  "catalog": {
+    "cdp_bazaar": {
+      "status": "listed",
+      "unique_payers_30d": 0,
+      "total_calls_30d": 0,
+      "last_called_at": "example",
+      "detail": "example"
+    },
+    "payai": {
+      "status": "listed",
+      "unique_payers_30d": 0,
+      "total_calls_30d": 0,
+      "last_called_at": "example",
+      "detail": "example"
+    }
+  },
+  "diff": {
+    "prior_check": true,
+    "prior_checked_at": "example",
+    "changes": [],
+    "summary": "example"
+  }
+}
