@@ -20,14 +20,38 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "license": "MIT",
   "main": "dist/index.js",
   "name": "token-verdict-agentkit",
   "peerDependencies": {
     "@coinbase/agentkit": "^0.10.0"
   },
+  "repository": {
+    "directory": "agentkit",
+    "type": "git",
+    "url": "git+https://github.com/QuincyGB/token-verdict-tools.git"
+  },
+  "homepage": "https://github.com/QuincyGB/token-verdict-tools/tree/main/agentkit#readme",
+  "bugs": {
+    "url": "https://github.com/QuincyGB/token-verdict-tools/issues"
+  },
+  "keywords": [
+    "agentkit",
+    "coinbase",
+    "token",
+    "risk",
+    "x402",
+    "base"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
     "test": "npm run build && vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
