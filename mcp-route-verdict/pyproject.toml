@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "route-verdict-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP server for RouteVerdict — pay-per-call x402 endpoint trust checks over x402 ($0.05 USDC on Base)"
 readme = "README.md"
 requires-python = ">=3.10"

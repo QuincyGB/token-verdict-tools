@@ -1,4 +1,4 @@
-<!-- mcp-name: io.github.quincygb/list-smith-mcp -->
+<!-- mcp-name: io.github.QuincyGB/list-smith-mcp -->
 # list-smith-mcp
 
 An [MCP](https://modelcontextprotocol.io) server (stdio transport) that

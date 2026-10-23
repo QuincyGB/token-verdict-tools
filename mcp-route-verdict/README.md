@@ -1,4 +1,4 @@
-<!-- mcp-name: io.github.quincygb/route-verdict-mcp -->
+<!-- mcp-name: io.github.QuincyGB/route-verdict-mcp -->
 # route-verdict-mcp
 
 An [MCP](https://modelcontextprotocol.io) server (stdio transport) that

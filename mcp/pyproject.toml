@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "token-verdict-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP server for Token Verdict — pay-per-call token risk verdicts over x402 ($0.02 USDC on Base)"
 readme = "README.md"
 requires-python = ">=3.10"
