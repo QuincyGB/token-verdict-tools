@@ -1,38 +1,31 @@
-# Token Verdict — agent distribution wrappers
+# Token Verdict Tools — MCP servers moved
 
-Native tool wrappers for **[Token Verdict](https://token-verdict-production.up.railway.app)**,
-the pay-per-call token risk screen for AI agents ($0.02 USDC per call on
-Base, via the [x402 protocol](https://x402.org)).
+This repository is now a **signpost and historical archive** for the three
+Verdict Row MCP servers. On 2026-10-25, each server was split into its own
+GitHub repository so directories that ingest and claim servers per repository
+— notably Glama — can process them independently.
 
-Token Verdict's buyers are other agents. These packages put the service
-on the shelves agents actually shop from, in the formats they call
-natively — payment handled by each agent's **own** wallet, with a spend
-guard at the known price:
+## Current homes
 
-| Package | Stack | What it gives an agent |
-|---|---|---|
-| [`mcp/`](mcp/) | Python · MCP (stdio) | A `token_verdict` tool in any MCP host (Claude Desktop, Cursor, custom runtimes), paying via an operator-configured EVM signer. |
-| [`agentkit/`](agentkit/) | TypeScript · Coinbase AgentKit | A `token_verdict` action in any AgentKit agent, paying from the agent's `EvmWalletProvider`. |
+| MCP server | PyPI package | Current GitHub repository | Install |
+|---|---|---|---|
+| Token Verdict | `token-verdict-mcp` | [QuincyGB/token-verdict-mcp](https://github.com/QuincyGB/token-verdict-mcp) | `pip install token-verdict-mcp` |
+| RouteVerdict | `route-verdict-mcp` | [QuincyGB/route-verdict-mcp](https://github.com/QuincyGB/route-verdict-mcp) | `pip install route-verdict-mcp` |
+| ListSmith | `list-smith-mcp` | [QuincyGB/list-smith-mcp](https://github.com/QuincyGB/list-smith-mcp) | `pip install list-smith-mcp` |
 
-Both wrap the same real contract — `POST /v1/verdict`:
+**The PyPI package names and install commands did not change.** Only the
+GitHub home of each MCP server moved. Use the repositories above for current
+source code, issues, documentation, and publishing workflows.
 
-```json
-{ "address": "0x2821d96B5FC81aEC3763340b375a846a89A3Ec1b", "chain": "base" }
-```
+## What remains here
 
-→ `{ token, verdict: SOLID|CAUTION|DANGER, score (0–100), signals (six
-weighted market-structure signals), take, market }`.
+Nothing was deleted. This repository retains the pre-split monorepo history,
+the AgentKit wrapper, and the submission notes for historical reference. Its
+copies of the three MCP servers are no longer the canonical source.
 
-Both implement the standard x402 v2 `exact`-scheme flow (402 → sign an
-EIP-3009 USDC authorization → retry with `PAYMENT-SIGNATURE`), the same
-flow used for the service's live cataloging payment; the service settles
-through its PayAI facilitator server-side. Neither package contains or
-transmits any private key: keys stay in the operator's environment /
-wallet provider, and every test payment is mocked — the test fixtures
-are the **real 402 challenge captured from production** (2026-10-23)
-and the service engine's own published example verdict.
-
-Service source: [QuincyGB/token-verdict](https://github.com/QuincyGB/token-verdict)
-(discovery manifest at `/.well-known/x402`, agent docs at `/skill.md`).
+The live services wrapped by these MCP servers are Token Verdict,
+RouteVerdict, and ListSmith — pay-per-call x402 services settling in USDC on
+Base. The Token Verdict service source remains at
+[QuincyGB/token-verdict](https://github.com/QuincyGB/token-verdict).
 
 MIT licensed.
