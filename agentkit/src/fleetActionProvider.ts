@@ -34,6 +34,18 @@ import {
 } from "./fleetSchemas";
 import { FLEET_PAY_TO, getFleetRoute } from "./fleetPack";
 import { fetchFleetRoute, type FleetOptions } from "./fleet";
+import {
+  buyFleetCheckPack,
+  fleetCheckSweep,
+  runFleetCheckSweep,
+  buyFleetCheckPackSchema,
+  fleetCheckSweepSchema,
+  fleetCheckPackIdSchema,
+  FLEET_CHECK_PACK_PRICE,
+  FLEET_CHECK_PACK_PRICE_UNITS,
+  FLEET_CHECK_SWEEP_PRICE,
+  FLEET_CHECK_SWEEP_PRICE_UNITS,
+} from "./fleetCheck";
 
 /**
  * FleetActionProvider — every cheap route of the Verdict Row x402
@@ -446,6 +458,105 @@ export class FleetActionProvider extends ActionProvider<EvmWalletProvider> {
     args: z.infer<typeof tokenVerdictPreTradeSchema>,
   ): Promise<string> {
     return this.invokeRoute("token_verdict_pre_trade", walletProvider, args as Record<string, unknown>);
+  }
+
+  // ------------------------------------------------------------------
+  // Fleet Check Framework Pack actions (Next-20 Item 13).
+  //
+  // These three actions are HAND-WRITTEN, not pack-generated: Fleet
+  // Check is priced ABOVE the <= $0.05 cap of the Item 4 pack this
+  // provider's other 24 actions are built from ($5.00 pack / $0.10
+  // single sweep), so it is deliberately kept out of the pack
+  // inventory and its prices are stated in full in each description.
+  // Deliveries carry the service's framework_log run-log entries.
+  // ------------------------------------------------------------------
+
+  private fleetCheckOptions() {
+    return {
+      baseUrl: this.options.baseUrls?.["stall-row"],
+      maxAmountPerPayment: this.options.maxAmountPerPayment,
+      fetchImpl: this.options.fetchImpl,
+    };
+  }
+
+  /**
+   * stall-row /v1/fleet-check/pack — $5.00 USDC on Base via x402.
+   * Hand-written Fleet Check action (NOT one of the <= $0.05
+   * pack-generated actions above).
+   */
+  @CreateAction({
+    name: "buy_fleet_check_pack",
+    description:
+      "$5.00 USDC per purchase via x402 on Base (5000000 atomic units) — ABOVE the $0.05 cap of this provider's pack-generated actions; this is a separate hand-written Fleet Check Framework Pack action. Buy the Fleet Check pack: 100 sweep credits bound to ONE fixed fleet definition (resources and/or origins), 90-day expiry (renewal cycle: buy a new $5.00 pack). Sweeps probe every route in the fleet unpaid and classify each OK / DEGRADED / DOWN with its defect; deliveries include framework_log run-log entries and renewal terms. Use this when an agent should sweep the same fleet of x402 routes repeatedly on its own schedule.",
+    schema: buyFleetCheckPackSchema,
+  })
+  async buyFleetCheckPack(
+    walletProvider: EvmWalletProvider,
+    args: z.infer<typeof buyFleetCheckPackSchema>,
+  ): Promise<string> {
+    try {
+      const delivery = await buyFleetCheckPack(
+        walletProvider.toSigner(),
+        args,
+        this.fleetCheckOptions(),
+      );
+      return JSON.stringify(delivery, null, 2);
+    } catch (error) {
+      return `Error calling buy_fleet_check_pack: this pack costs ${FLEET_CHECK_PACK_PRICE} USDC on Base (${FLEET_CHECK_PACK_PRICE_UNITS} atomic units, paid via x402 to ${FLEET_PAY_TO}) and the payment/delivery did not complete: ${error}`;
+    }
+  }
+
+  /**
+   * stall-row /v1/fleet-check — $0.10 USDC on Base via x402.
+   * Hand-written Fleet Check action (NOT pack-generated; $0.10 is
+   * above the <= $0.05 pack cap).
+   */
+  @CreateAction({
+    name: "fleet_check_sweep",
+    description:
+      "$0.10 USDC per call via x402 on Base (100000 atomic units) — ABOVE the $0.05 cap of this provider's pack-generated actions; this is a separate hand-written Fleet Check Framework Pack action. One Fleet Check sweep: probe every named resource / every priced resource of every named origin unpaid, classify each OK / DEGRADED / DOWN with its defect, grade each origin, and return the table plus framework_log run-log entries. Use this for a one-off whole-fleet health sweep; for repeated sweeps of the same fleet, buy_fleet_check_pack is cheaper per sweep.",
+    schema: fleetCheckSweepSchema,
+  })
+  async fleetCheckSweep(
+    walletProvider: EvmWalletProvider,
+    args: z.infer<typeof fleetCheckSweepSchema>,
+  ): Promise<string> {
+    try {
+      const delivery = await fleetCheckSweep(
+        walletProvider.toSigner(),
+        args,
+        this.fleetCheckOptions(),
+      );
+      return JSON.stringify(delivery, null, 2);
+    } catch (error) {
+      return `Error calling fleet_check_sweep: this sweep costs ${FLEET_CHECK_SWEEP_PRICE} USDC on Base (${FLEET_CHECK_SWEEP_PRICE_UNITS} atomic units, paid via x402 to ${FLEET_PAY_TO}) and the payment/delivery did not complete: ${error}`;
+    }
+  }
+
+  /**
+   * stall-row /v1/fleet-check/run — one pack credit, no x402 payment.
+   * Hand-written Fleet Check action (NOT pack-generated).
+   */
+  @CreateAction({
+    name: "run_fleet_check_sweep",
+    description:
+      "No x402 payment on this call: it spends ONE sweep credit from a Fleet Check pack bought with buy_fleet_check_pack ($5.00 for 100 sweeps, 90-day expiry). Run one sweep of the pack's fixed fleet definition right now: every route probed unpaid, classified OK / DEGRADED / DOWN with its defect, diffed against the previous sweep (new failures and recoveries are pushed to the pack's webhook), and returned with framework_log run-log entries and credits_remaining. Use this when a framework runner sweeps its fleet on its own clock.",
+    schema: fleetCheckPackIdSchema,
+  })
+  async runFleetCheckSweep(
+    walletProvider: EvmWalletProvider,
+    args: z.infer<typeof fleetCheckPackIdSchema>,
+  ): Promise<string> {
+    void walletProvider;
+    try {
+      const delivery = await runFleetCheckSweep(
+        args.pack_id,
+        this.fleetCheckOptions(),
+      );
+      return JSON.stringify(delivery, null, 2);
+    } catch (error) {
+      return `Error calling run_fleet_check_sweep: this call spends one credit from a Fleet Check pack (bought via buy_fleet_check_pack, $5.00 for 100 sweeps payable to ${FLEET_PAY_TO} on Base) and did not complete: ${error}`;
+    }
   }
 
   /**

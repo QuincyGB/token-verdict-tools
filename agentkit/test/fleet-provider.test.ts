@@ -122,8 +122,15 @@ describe("FleetActionProvider — inventory pinned to the embedded pack", () => 
     const provider = fleetActionProvider();
     const actions = provider.getActions(fakeWalletProvider(account));
 
-    expect(actions).toHaveLength(24);
-    expect(actions.map((a) => a.name).sort()).toEqual(
+    // The pack-generated inventory is exactly the pack's 24 routes.
+    // (Item 13 adds three HAND-WRITTEN Fleet Check actions on top —
+    // priced above the pack cap — pinned separately in
+    // fleet-check.test.ts; they are not part of this inventory.)
+    const packActions = actions.filter((a) =>
+      FLEET_ROUTES.some((r) => a.name === `${PREFIX}${r.name}`),
+    );
+    expect(packActions).toHaveLength(24);
+    expect(packActions.map((a) => a.name).sort()).toEqual(
       FLEET_ROUTES.map((r) => `${PREFIX}${r.name}`).sort(),
     );
     // Prices pinned to the pack: every action's description carries its

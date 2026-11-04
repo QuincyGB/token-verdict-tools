@@ -154,6 +154,29 @@ The pack itself is exported for inspection: `FLEET_PACK`,
 `getFleetRoute()`, `getFleetTool()`, plus the standalone
 `fetchFleetRoute(signer, routeName, args, options)` helper.
 
+## Fleet Check Framework Pack actions (0.3.0+)
+
+Three additional actions on `fleetActionProvider` are **hand-written,
+not pack-generated** — Fleet Check is priced *above* the ≤ $0.05 cap
+of the pack above, and is kept out of that inventory deliberately:
+
+| Action | Terms |
+|---|---|
+| `buy_fleet_check_pack` | **$5.00** USDC via x402 — 100 sweep credits bound to ONE fixed fleet definition, 90-day expiry (renewal cycle) |
+| `fleet_check_sweep` | **$0.10** USDC via x402 — one sweep of a caller-named fleet |
+| `run_fleet_check_sweep` | one pack credit, no x402 payment — sweep the pack's fixed fleet now |
+
+Each paid leg caps its spend guard at exactly its own price. Fleet
+Check deliveries carry the service's `framework_log` section —
+framework-style run-log entries (tool, resource, verdict, defect,
+one-line message) a runner can drop into its own run log — and pack
+deliveries carry `renewal` terms derived server-side from the pack
+constants. Standalone helpers are also exported: `buyFleetCheckPack`,
+`fleetCheckSweep`, `runFleetCheckSweep`, `fleetCheckStatus` (free),
+with the `FLEET_CHECK_*` price/path constants. The machine-readable
+descriptor lives at
+<https://verdictrow.com/fleet-check-framework-pack.json>.
+
 ## Tests
 
 ```bash

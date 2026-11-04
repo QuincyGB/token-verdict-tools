@@ -6,7 +6,7 @@
     "viem": "^2.57.0",
     "zod": "^3.25.0"
   },
-  "description": "Coinbase AgentKit action providers for the Verdict Row x402 fleet: Token Verdict token risk verdicts plus a fleet provider wrapping every fleet route priced <= $0.05 (24 actions) as native AgentKit actions with the x402 payment leg handled inside (USDC on Base).",
+  "description": "Coinbase AgentKit action providers for the Verdict Row x402 fleet: Token Verdict token risk verdicts, a fleet provider wrapping every fleet route priced <= $0.05 (24 actions) as native AgentKit actions with the x402 payment leg handled inside (USDC on Base), plus hand-written Fleet Check Framework Pack actions above that cap (buy_fleet_check_pack $5.00, fleet_check_sweep $0.10, run_fleet_check_sweep by pack credit).",
   "devDependencies": {
     "@coinbase/agentkit": "^0.10.4",
     "@types/node": "^22.0.0",
@@ -60,5 +60,5 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "types": "dist/index.d.ts",
-  "version": "0.2.0"
+  "version": "0.3.0"
 }
