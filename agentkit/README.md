@@ -1,8 +1,18 @@
 # token-verdict-agentkit
 
-A [Coinbase AgentKit](https://docs.cdp.coinbase.com/agentkit/docs/welcome)
-action provider that gives any AgentKit agent a native **`token_verdict`**
-action: a pay-per-call token risk screen.
+[Coinbase AgentKit](https://docs.cdp.coinbase.com/agentkit/docs/welcome)
+action providers for the Verdict Row x402 fleet, in one package:
+
+- **`tokenVerdictActionProvider`** (since 0.1.0) — a native
+  **`token_verdict`** action: a pay-per-call token risk screen.
+- **`fleetActionProvider`** (since 0.2.0) — **every fleet route priced
+  ≤ $0.05 as a native AgentKit action** (24 actions: StallRow wallet /
+  guard / recheck / grading checks, the RouteVerdict check, and both
+  Token Verdict routes), each with the x402 payment leg handled inside.
+
+The package keeps its original name for backwards compatibility — it is
+the published npm identity of the Token Verdict provider, and the
+original provider and action are unchanged.
 
 Token Verdict: send a token contract address, get back a verdict
 (**SOLID / CAUTION / DANGER**), a 0–100 risk score, six weighted
@@ -87,8 +97,62 @@ tokenVerdictActionProvider({
 
 AgentKit also ships a generic x402 *discovery* provider
 (`x402ActionProvider`, listing services by facilitator). This package
-is the complementary piece: a dedicated, typed action for one specific
-service, with its real request/response contract and a price guard.
+is the complementary piece: dedicated, typed actions for specific
+services, with their real request/response contracts and price guards.
+
+## The fleet provider (0.2.0+)
+
+```ts
+import { AgentKit } from "@coinbase/agentkit";
+import { fleetActionProvider } from "token-verdict-agentkit";
+
+const agentKit = await AgentKit.configureWithWallet({
+  walletProvider, // any EvmWalletProvider on Base
+  actionProviders: [fleetActionProvider()],
+});
+```
+
+The fleet provider's action set is built **from the fleet's
+function-calling schema pack** (`src/function-tools.json`, generated
+from the canonical route registry — the same pack served at
+verdictrow.com/function-tools.json): action names, descriptions,
+prices and zod schemas are read out of the pack, never hand-typed, and
+the test suite pins the provider's inventory to the pack so the
+AgentKit surface cannot drift from the registry truth.
+
+All 24 actions (AgentKit prefixes each with `FleetActionProvider_`):
+
+| Stall | Actions |
+|---|---|
+| stall-row (21) | `stall_row_wallet_snapshot` ($0.005), `stall_row_allowance_audit` ($0.005), `stall_row_tx_decoder` ($0.002), `stall_row_gas_oracle` ($0.001), `stall_row_wallet_verdict` ($0.02), `stall_row_pre_trade_guard` ($0.005), `stall_row_grade_my_stall` ($0.005), `stall_row_receipt_verify` ($0.002), `stall_row_flagged_paytos` ($0.005), `stall_row_agent_card_verify` ($0.005), `stall_row_tube_search` ($0.01), `stall_row_page_to_markdown` ($0.01), `stall_row_repo_vitals` ($0.005), `stall_row_price_check` ($0.05), `stall_row_job_scout` ($0.05), `stall_row_recheck` ($0.005), `stall_row_sign_read` ($0.01), `stall_row_score_book` ($0.01), `stall_row_guard` ($0.01), `stall_row_physical` ($0.05), `stall_row_payto_pin_verify` ($0.01) |
+| route-verdict (1) | `route_verdict_check` ($0.05) |
+| token-verdict (2) | `token_verdict_verdict` ($0.02), `token_verdict_pre_trade` ($0.05) |
+
+Each action validates its arguments against the pack-derived zod
+schema, pays its route's 402 challenge from the agent wallet through
+the same `@x402/fetch` + `@x402/evm` stack as the Token Verdict
+provider, caps its spend guard at its own route's pack price, and
+returns the stall's JSON delivery verbatim (including any
+`verdict_row_loop` block). A payment that cannot settle — for example
+a challenge amount above the route's price — surfaces as an error
+string naming the route's price and the fleet payTo
+(`0x097f9685D1e0752bF8B02d61E5Ce9be7eA0FBA7F`); it is never silently
+swallowed.
+
+Options mirror the Token Verdict provider's shape:
+
+```ts
+fleetActionProvider({
+  baseUrls: { "stall-row": "https://staging.example.com" }, // per-stall origin override
+  maxAmountPerPayment: "$0.05",                             // spend-guard override
+  // fetchImpl: custom fetch (testing)
+});
+```
+
+The pack itself is exported for inspection: `FLEET_PACK`,
+`FLEET_ROUTES`, `FLEET_TOOLS`, `FLEET_ACTION_SCHEMAS`,
+`getFleetRoute()`, `getFleetTool()`, plus the standalone
+`fetchFleetRoute(signer, routeName, args, options)` helper.
 
 ## Tests
 
@@ -96,12 +160,18 @@ service, with its real request/response contract and a price guard.
 npm test   # builds with tsc, then runs vitest
 ```
 
-8 tests, all payments mocked: fetch is stubbed (first call replays the
-real 402 challenge captured from production; second returns the service
-engine's published example verdict) and the wallet is a throwaway
-account generated at test time. The paid-flow test verifies the EIP-712
-signature recovers to the wallet address. No key material lives in this
-repo and no test touches the network.
+All payments mocked: fetch is stubbed (first call replays a 402
+challenge — for Token Verdict, the real one captured from production;
+for fleet routes, one built from the pack's own terms for the route
+under test; second returns a fixture delivery) and the wallet is a
+throwaway account generated at test time. The Token Verdict paid-flow
+test verifies the EIP-712 signature recovers to the wallet address;
+the fleet tests pin all 24 action names/prices to the embedded pack,
+validate every pack-derived zod schema, run mocked paid invokes for
+one action per stall family (stall-row, route-verdict, token-verdict),
+and prove an over-cap 402 surfaces with the route's price and payTo
+instead of being paid. No key material lives in this repo and no test
+touches the network.
 
 > Why do the provider tests import from `dist/`? AgentKit's
 > `CreateAction` decorator reads TypeScript `design:paramtypes`

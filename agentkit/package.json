@@ -6,7 +6,7 @@
     "viem": "^2.57.0",
     "zod": "^3.25.0"
   },
-  "description": "Coinbase AgentKit action provider for Token Verdict \u2014 pay-per-call token risk verdicts ($0.02 USDC on Base via x402).",
+  "description": "Coinbase AgentKit action providers for the Verdict Row x402 fleet: Token Verdict token risk verdicts plus a fleet provider wrapping every fleet route priced <= $0.05 (24 actions) as native AgentKit actions with the x402 payment leg handled inside (USDC on Base).",
   "devDependencies": {
     "@coinbase/agentkit": "^0.10.4",
     "@types/node": "^22.0.0",
@@ -44,7 +44,11 @@
     "token",
     "risk",
     "x402",
-    "base"
+    "base",
+    "verdict-row",
+    "fleet",
+    "stall-row",
+    "route-verdict"
   ],
   "publishConfig": {
     "access": "public"
@@ -56,5 +60,5 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "types": "dist/index.d.ts",
-  "version": "0.1.0"
+  "version": "0.2.0"
 }
