@@ -1,5 +1,7 @@
 # Token Verdict Tools — MCP servers moved
 
+[![QuincyGB/token-verdict-tools MCP server](https://glama.ai/mcp/servers/QuincyGB/token-verdict-tools/badges/score.svg)](https://glama.ai/mcp/servers/QuincyGB/token-verdict-tools)
+
 This repository is now a **signpost and historical archive** for the three
 Verdict Row MCP servers. On 2026-10-25, each server was split into its own
 GitHub repository so directories that ingest and claim servers per repository
